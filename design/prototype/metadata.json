@@ -1,0 +1,6 @@
+{
+  "name": "Ballpark",
+  "description": "A premium career-prep web app designed for students practicing management consulting guesstimates and market sizing cases with AI evaluation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

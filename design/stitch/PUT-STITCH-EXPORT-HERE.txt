@@ -1,0 +1,7 @@
+﻿Put your Google Stitch export here (unzipped HTML + images) plus the 4 screenshots:
+  01-resources.png
+  02-configuration.png
+  03-practice.png
+  04-feedback-history.png
+
+Until this folder has the export, the build uses the default design tokens in PRD.md Section 9.
