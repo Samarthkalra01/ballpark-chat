@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { RESOURCES } from "@/content/resources";
@@ -12,11 +13,12 @@ export default async function ResourcesPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
 
   const { data: profile } = await supabase
     .from("profiles")
     .select("full_name")
-    .eq("id", user!.id)
+    .eq("id", user.id)
     .single();
   const firstName = (profile?.full_name?.trim() || user?.email?.split("@")[0] || "there").split(
     " ",

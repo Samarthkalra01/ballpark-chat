@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { Check, Sparkles } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getSubscription } from "@/lib/subscription";
@@ -23,7 +24,8 @@ export default async function BillingPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const sub = await getSubscription(supabase, user!.id);
+  if (!user) redirect("/login");
+  const sub = await getSubscription(supabase, user.id);
   const isPro = sub.plan === "pro";
 
   const freeGen = generationLimit();
