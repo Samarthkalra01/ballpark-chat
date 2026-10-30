@@ -8,6 +8,9 @@ function isPublic(pathname: string): boolean {
   if (PUBLIC_PATHS.includes(pathname)) return true;
   // Auth callback / confirm handlers.
   if (pathname.startsWith("/auth")) return true;
+  // API routes (incl. the Dodo webhook) handle their own auth and must
+  // never be redirected to /login — they return JSON, not HTML.
+  if (pathname.startsWith("/api")) return true;
   return false;
 }
 

@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { generateRequestSchema } from "@/lib/ai/schemas";
 import { generateQuestion } from "@/lib/ai/gemini";
-import { incrementUsage, generationLimit } from "@/lib/limits";
+import { incrementUsage, generationLimitForPlan } from "@/lib/limits";
+import { getUserPlan } from "@/lib/subscription";
 import { pickBankQuestion } from "@/data/question-bank";
 
 export async function POST(request: Request) {
@@ -28,11 +29,18 @@ export async function POST(request: Request) {
   }
   const { category, difficulty, geography } = parsed.data;
 
-  // Daily generation limit.
-  const allowed = await incrementUsage(supabase, "generation", generationLimit());
+  // Daily generation limit (higher for Pro subscribers).
+  const plan = await getUserPlan(supabase, user.id);
+  const allowed = await incrementUsage(supabase, "generation", generationLimitForPlan(plan));
   if (!allowed) {
     return NextResponse.json(
-      { error: "limit", message: "You've hit today's practice limit — come back tomorrow!" },
+      {
+        error: "limit",
+        message:
+          plan === "pro"
+            ? "You've hit today's limit — come back tomorrow!"
+            : "You've hit today's free limit — upgrade to Pro for higher limits.",
+      },
       { status: 429 },
     );
   }

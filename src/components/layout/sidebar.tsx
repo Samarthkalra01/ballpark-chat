@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Brain, BarChart3, Play, X, LogOut } from "lucide-react";
+import { BookOpen, Brain, BarChart3, Play, X, LogOut, Sparkles, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { signOut } from "@/app/(app)/actions";
 
@@ -22,10 +22,12 @@ function isActive(pathname: string, href: string) {
 function SidebarInner({
   userName,
   userSubtitle,
+  isPro,
   onNavigate,
 }: {
   userName: string;
   userSubtitle: string;
+  isPro: boolean;
   onNavigate?: () => void;
 }) {
   const pathname = usePathname();
@@ -99,21 +101,38 @@ function SidebarInner({
           {initial}
         </div>
         <div className="flex min-w-0 flex-1 flex-col">
-          <span className="truncate text-xs font-bold text-white">{userName}</span>
+          <span className="flex items-center gap-1.5 truncate text-xs font-bold text-white">
+            {userName}
+            {isPro && (
+              <span className="rounded bg-indigo-500/20 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-indigo-300">
+                Pro
+              </span>
+            )}
+          </span>
           <span className="truncate text-[10px] text-slate-400">{userSubtitle}</span>
         </div>
       </div>
 
-      {/* Logout */}
-      <form action={signOut} className="border-t border-slate-800 pt-3">
-        <button
-          type="submit"
+      {/* Billing / upgrade + logout */}
+      <div className="space-y-1 border-t border-slate-800 pt-3">
+        <Link
+          href="/billing"
+          onClick={onNavigate}
           className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-medium text-slate-400 transition-colors hover:bg-slate-800/50 hover:text-white"
         >
-          <LogOut className="h-4 w-4" />
-          Log out
-        </button>
-      </form>
+          {isPro ? <CreditCard className="h-4 w-4" /> : <Sparkles className="h-4 w-4 text-indigo-400" />}
+          {isPro ? "Billing" : "Upgrade to Pro"}
+        </Link>
+        <form action={signOut}>
+          <button
+            type="submit"
+            className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-medium text-slate-400 transition-colors hover:bg-slate-800/50 hover:text-white"
+          >
+            <LogOut className="h-4 w-4" />
+            Log out
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
@@ -121,11 +140,13 @@ function SidebarInner({
 export function Sidebar({
   userName,
   userSubtitle,
+  isPro,
   isOpenMobile,
   setIsOpenMobile,
 }: {
   userName: string;
   userSubtitle: string;
+  isPro: boolean;
   isOpenMobile: boolean;
   setIsOpenMobile: (open: boolean) => void;
 }) {
@@ -133,7 +154,7 @@ export function Sidebar({
     <>
       {/* Desktop persistent sidebar (280px) */}
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-[280px] border-r border-slate-800 lg:block">
-        <SidebarInner userName={userName} userSubtitle={userSubtitle} />
+        <SidebarInner userName={userName} userSubtitle={userSubtitle} isPro={isPro} />
       </aside>
 
       {/* Mobile drawer */}
@@ -154,6 +175,7 @@ export function Sidebar({
             <SidebarInner
               userName={userName}
               userSubtitle={userSubtitle}
+              isPro={isPro}
               onNavigate={() => setIsOpenMobile(false)}
             />
           </div>

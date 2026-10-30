@@ -24,7 +24,9 @@ instant AI feedback scored out of 10. Full spec is in `PRD.md`. Build it in the 
 
 1. **Never expose secrets to the browser.** The Gemini API key is server-only. Only
    `NEXT_PUBLIC_*` env vars may appear in client code. Never prefix the Gemini key with
-   `NEXT_PUBLIC_`. Never use the Supabase `service_role` key in this app.
+   `NEXT_PUBLIC_`. The Supabase `service_role` key is used **only** server-side in the Dodo
+   webhook route (`src/app/api/webhooks/dodo`) to update subscriptions — never in client code
+   and never prefixed `NEXT_PUBLIC_`.
 2. **All AI calls run in route handlers (server), never in the browser.**
 3. **Enforce auth + ownership on every API route**, not just in the UI. RLS is on every table.
 4. **Validate everything with Zod** — API inputs and the JSON Gemini returns. On invalid AI

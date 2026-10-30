@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { AppShell } from "@/components/layout/app-shell";
+import { getUserPlan } from "@/lib/subscription";
 
 export default async function AppLayout({
   children,
@@ -23,8 +24,10 @@ export default async function AppLayout({
   const fullName =
     profile?.full_name?.trim() || user.email?.split("@")[0] || "there";
 
+  const plan = await getUserPlan(supabase, user.id);
+
   return (
-    <AppShell userName={fullName} userSubtitle={user.email ?? ""}>
+    <AppShell userName={fullName} userSubtitle={user.email ?? ""} isPro={plan === "pro"}>
       {children}
     </AppShell>
   );

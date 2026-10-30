@@ -8,10 +8,12 @@ import { ToastProvider } from "@/components/ui/toast";
 export function AppShell({
   userName,
   userSubtitle,
+  isPro,
   children,
 }: {
   userName: string;
   userSubtitle: string;
+  isPro: boolean;
   children: React.ReactNode;
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -22,6 +24,7 @@ export function AppShell({
         <Sidebar
           userName={userName}
           userSubtitle={userSubtitle}
+          isPro={isPro}
           isOpenMobile={mobileOpen}
           setIsOpenMobile={setMobileOpen}
         />

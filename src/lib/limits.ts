@@ -12,6 +12,25 @@ export function evaluationLimit(): number {
   return Number.isFinite(n) && n > 0 ? n : DEFAULT_EVALUATION_LIMIT;
 }
 
+// Pro (paid) daily limits — higher caps for subscribers.
+export function proGenerationLimit(): number {
+  const n = parseInt(process.env.PRO_GENERATION_LIMIT ?? "", 10);
+  return Number.isFinite(n) && n > 0 ? n : 200;
+}
+
+export function proEvaluationLimit(): number {
+  const n = parseInt(process.env.PRO_EVALUATION_LIMIT ?? "", 10);
+  return Number.isFinite(n) && n > 0 ? n : 150;
+}
+
+export function generationLimitForPlan(plan: "free" | "pro"): number {
+  return plan === "pro" ? proGenerationLimit() : generationLimit();
+}
+
+export function evaluationLimitForPlan(plan: "free" | "pro"): number {
+  return plan === "pro" ? proEvaluationLimit() : evaluationLimit();
+}
+
 /**
  * Atomically increments the user's daily usage via the `increment_usage` RPC.
  * Returns true if the action is allowed, false if the daily limit is reached.

@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { evaluateRequestSchema, computeOverall } from "@/lib/ai/schemas";
 import { evaluateAnswer } from "@/lib/ai/gemini";
-import { incrementUsage, evaluationLimit } from "@/lib/limits";
+import { incrementUsage, evaluationLimitForPlan } from "@/lib/limits";
+import { getUserPlan } from "@/lib/subscription";
 import { htmlToText } from "@/lib/html-to-text";
 import { countWords } from "@/lib/utils";
 import { MIN_ANSWER_WORDS } from "@/lib/constants";
@@ -70,11 +71,18 @@ export async function POST(
     })
     .eq("id", id);
 
-  // Daily evaluation limit.
-  const allowed = await incrementUsage(supabase, "evaluation", evaluationLimit());
+  // Daily evaluation limit (higher for Pro subscribers).
+  const plan = await getUserPlan(supabase, user.id);
+  const allowed = await incrementUsage(supabase, "evaluation", evaluationLimitForPlan(plan));
   if (!allowed) {
     return NextResponse.json(
-      { error: "limit", message: "You've hit today's evaluation limit — come back tomorrow!" },
+      {
+        error: "limit",
+        message:
+          plan === "pro"
+            ? "You've hit today's evaluation limit — come back tomorrow!"
+            : "You've hit today's free evaluation limit — upgrade to Pro for higher limits.",
+      },
       { status: 429 },
     );
   }
