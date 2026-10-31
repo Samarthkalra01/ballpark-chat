@@ -22,6 +22,7 @@ export const metadata: Metadata = {
   description:
     "Practice guesstimates the way you'll be tested, and get interviewer-style feedback in seconds.",
   icons: { icon: "/favicon.ico" },
+  verification: { google: "Jl5joORGH01bRmru_tLN4x5vUBMjGutYWISnrjIEs3E" },
 };
 
 export default function RootLayout({
